@@ -4,7 +4,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
-  Image,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -16,14 +15,18 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function SignInScreen() {
-  const [signInForm, setSignInForm] = useState({
+export default function ForgotPasswordScreen() {
+  const [forgotPasswordForm, setForgotPasswordForm] = useState({
     email: "",
+    otpCode: "",
     password: "",
+    confirmPassword: "",
   });
 
+  const [forgotPasswordStep, setForgotPasswordStep] = useState(1);
+
   const handleChange = (name: string, value: string) => {
-    setSignInForm((prev) => ({
+    setForgotPasswordForm((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -31,7 +34,13 @@ export default function SignInScreen() {
 
   const handleSubmit = async () => {
     try {
-      console.log("sign in res", signInForm);
+      if (forgotPasswordStep === 1) {
+        console.log("step 1", forgotPasswordForm.email);
+        setForgotPasswordStep(2);
+        return;
+      }
+
+      console.log("step 2", forgotPasswordForm);
     } catch (error) {
       console.log("sign in err", error);
     }
@@ -64,26 +73,48 @@ export default function SignInScreen() {
               <View className="flex-1 justify-end">
                 <View className="h-[75%] bg-white items-center rounded-t-[30px]">
                   <Text className="font-semibold text-3xl mt-10 mb-4 text-blue-third">
-                    Welcome Back
+                    {forgotPasswordStep === 1
+                      ? "Receive OTP"
+                      : "Reset Password"}
                   </Text>
 
                   {/*Form */}
                   <View className="w-[80%] gap-4 my-6">
-                    <TextInputAuth
-                      label="Email"
-                      value={signInForm.email}
-                      onChangeText={(text: string) =>
-                        handleChange("email", text)
-                      }
-                    />
-                    <TextInputAuth
-                      label="Password"
-                      value={signInForm.password}
-                      onChangeText={(text: string) =>
-                        handleChange("password", text)
-                      }
-                      secureTextEntry
-                    />
+                    {forgotPasswordStep === 1 ? (
+                      <TextInputAuth
+                        label="Email"
+                        value={forgotPasswordForm.email}
+                        onChangeText={(text: string) =>
+                          handleChange("email", text)
+                        }
+                      />
+                    ) : (
+                      <>
+                        <TextInputAuth
+                          label="OTP Code"
+                          value={forgotPasswordForm.otpCode}
+                          onChangeText={(text: string) =>
+                            handleChange("otpCode", text)
+                          }
+                        />
+                        <TextInputAuth
+                          label="Password"
+                          value={forgotPasswordForm.password}
+                          onChangeText={(text: string) =>
+                            handleChange("password", text)
+                          }
+                          secureTextEntry
+                        />
+                        <TextInputAuth
+                          label="Confirm Password"
+                          value={forgotPasswordForm.confirmPassword}
+                          onChangeText={(text: string) =>
+                            handleChange("confirmPassword", text)
+                          }
+                          secureTextEntry
+                        />
+                      </>
+                    )}
                   </View>
 
                   <TouchableOpacity
@@ -91,36 +122,9 @@ export default function SignInScreen() {
                     className="bg-blue-third p-3 w-[80%] rounded-full items-center"
                   >
                     <Text className="text-xl text-white font-medium">
-                      Sign In
+                      {forgotPasswordStep === 1 ? "Send OTP" : "Reset Password"}
                     </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => router.push("/forgot-password")}
-                  >
-                    <Text className="text-right text-lg text-blue-third mt-4">
-                      Forgot password?
-                    </Text>
-                  </TouchableOpacity>
-
-                  {/*other gg */}
-                  <View className="flex-row items-center justify-center my-10 w-[80%] overflow-hidden">
-                    <View className=" w-full h-[1px] bg-gray-200" />
-                    <Text className="bg-white text-gray-300 px-2">
-                      Or sign in with
-                    </Text>
-                    <View className=" w-full h-[1px] bg-gray-200" />
-                  </View>
-
-                  {/* Button login gg */}
-                  <View className="w-[80%]">
-                    <TouchableOpacity className="border border-gray-300 w-full p-3 rounded-full items-center justify-center flex-row gap-2">
-                      <Image
-                        source={require("@/assets/icons/google.png")}
-                        className="w-6 h-6"
-                      />
-                      <Text className="text-xl font-medium">Google</Text>
-                    </TouchableOpacity>
-                  </View>
                 </View>
               </View>
             </ScrollView>
