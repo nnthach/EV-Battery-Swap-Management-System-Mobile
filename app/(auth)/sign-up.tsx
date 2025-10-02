@@ -1,4 +1,5 @@
 import TextInputAuth from "@/components/TextInputAuth";
+import { registerAPI } from "@/services/authService";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
@@ -19,10 +20,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function SignUpScreen() {
   const [signUpForm, setSignUpForm] = useState({
     email: "",
-    fullname: "",
+    username: "",
     password: "",
     confirmPassword: "",
   });
+
+  const [focusedField, setFocusedField] = useState(null);
 
   const handleChange = (name: string, value: string) => {
     setSignUpForm((prev) => ({
@@ -33,7 +36,11 @@ export default function SignUpScreen() {
 
   const handleSubmit = async () => {
     try {
-      console.log("sign in res", signUpForm);
+      const { confirmPassword, ...newSignUpForm } = signUpForm;
+      console.log("sign in form", newSignUpForm);
+      const res = await registerAPI(newSignUpForm);
+      console.log("register res", res);
+      console.log("register res", res.data);
     } catch (error) {
       console.log("sign in err", error);
     }
@@ -72,35 +79,47 @@ export default function SignUpScreen() {
                   {/*Form */}
                   <View className="w-[80%] gap-4 my-6">
                     <TextInputAuth
+                      name="email"
                       label="Email"
                       value={signUpForm.email}
                       onChangeText={(text: string) =>
                         handleChange("email", text)
                       }
+                      focusedField={focusedField}
+                      setFocusedField={setFocusedField}
                     />
 
                     <TextInputAuth
-                      label="Full Name"
-                      value={signUpForm.fullname}
+                      name="username"
+                      label="Username"
+                      value={signUpForm.username}
                       onChangeText={(text: string) =>
-                        handleChange("fullname", text)
+                        handleChange("username", text)
                       }
+                      focusedField={focusedField}
+                      setFocusedField={setFocusedField}
                     />
                     <TextInputAuth
+                      name="password"
                       label="Password"
                       value={signUpForm.password}
                       onChangeText={(text: string) =>
                         handleChange("password", text)
                       }
                       secureTextEntry
+                      focusedField={focusedField}
+                      setFocusedField={setFocusedField}
                     />
                     <TextInputAuth
+                      name="confirmPassword"
                       label="Confirm Password"
                       value={signUpForm.confirmPassword}
                       onChangeText={(text: string) =>
                         handleChange("confirmPassword", text)
                       }
                       secureTextEntry
+                      focusedField={focusedField}
+                      setFocusedField={setFocusedField}
                     />
                   </View>
 

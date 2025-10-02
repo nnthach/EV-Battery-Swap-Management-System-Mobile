@@ -1,7 +1,9 @@
-import { useState } from "react";
 import { Text, TextInput, View } from "react-native";
 
 function TextInputAuth({
+  focusedField,
+  setFocusedField,
+  name,
   label,
   value,
   onChangeText,
@@ -10,7 +12,7 @@ function TextInputAuth({
   customLeftCSSOnfocus = "left-4",
   ...props
 }: any) {
-  const [isFocused, setIsFocused] = useState(false);
+  const isFocused = focusedField === name;
   return (
     <>
       <View
@@ -26,18 +28,18 @@ function TextInputAuth({
           className={`h-full w-full px-4 pb-1 text-xl text-blue-four`}
           value={value}
           onChangeText={onChangeText}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onFocus={() => setFocusedField(name)}
+          onBlur={() => setFocusedField(null)}
           textAlignVertical="center"
           {...props}
         />
         <Text
-          className={`absolute px-1 
-                        transition-all duration-200 ease-in-out ${
-                          isFocused || value
-                            ? `-top-3 ${customLeftCSSOnfocus} scale-90 text-blue-four bg-white`
-                            : `top-1/2 -translate-y-1/2 ${customLeftCSSOnblur} scale-125 text-gray-400`
-                        }`}
+          className={`absolute transition-all duration-200 ease-in-out left-4
+            ${
+              isFocused || value
+                ? "-top-3 scale-90 text-blue-four bg-white px-1"
+                : "top-1/2 -translate-y-1/2 scale-100 text-gray-400 bg-white"
+            }`}
         >
           {label}
         </Text>

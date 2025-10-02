@@ -1,4 +1,5 @@
 import TextInputAuth from "@/components/TextInputAuth";
+import { loginAPI } from "@/services/authService";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
@@ -18,9 +19,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SignInScreen() {
   const [signInForm, setSignInForm] = useState({
-    email: "",
+    usernameOrEmail: "",
     password: "",
   });
+
+  const [focusedField, setFocusedField] = useState(null);
 
   const handleChange = (name: string, value: string) => {
     setSignInForm((prev) => ({
@@ -32,6 +35,9 @@ export default function SignInScreen() {
   const handleSubmit = async () => {
     try {
       console.log("sign in res", signInForm);
+      // const res = await loginAPI(signInForm);
+      // console.log("login res", res.data);
+      router.replace("/(root)/(tabs)");
     } catch (error) {
       console.log("sign in err", error);
     }
@@ -70,19 +76,25 @@ export default function SignInScreen() {
                   {/*Form */}
                   <View className="w-[80%] gap-4 my-6">
                     <TextInputAuth
-                      label="Email"
-                      value={signInForm.email}
+                      name="usernameOrEmail"
+                      label="Username Or Email"
+                      value={signInForm.usernameOrEmail}
                       onChangeText={(text: string) =>
-                        handleChange("email", text)
+                        handleChange("usernameOrEmail", text)
                       }
+                      focusedField={focusedField}
+                      setFocusedField={setFocusedField}
                     />
                     <TextInputAuth
+                      name="password"
                       label="Password"
                       value={signInForm.password}
                       onChangeText={(text: string) =>
                         handleChange("password", text)
                       }
                       secureTextEntry
+                      focusedField={focusedField}
+                      setFocusedField={setFocusedField}
                     />
                   </View>
 
